@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Time Slider</title>
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .slider-container {
+      position: relative;
+      width: 80%;
+      height: 60px;
+      background: #333;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+    }
+
+    .slider-track {
+      position: relative;
+      width: 100%;
+      height: 8px;
+      background: #666;
+      border-radius: 4px;
+    }
+
+    .slider-thumb {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 32px;
+      height: 32px;
+      background: white;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .year-label {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <div class="slider-container">
+      <div class="slider-track" id="sliderTrack">
+        <div class="slider-thumb" id="sliderThumb"></div>
+      </div>
+    </div>
+    <div class="year-label" id="yearLabel">1851</div>
+  </div>
+
+  <script>
+    const track = document.getElementById("sliderTrack");
+    const thumb = document.getElementById("sliderThumb");
+    const yearLabel = document.getElementById("yearLabel");
+
+    const years = [1851, 1880, 1900, 1920, 1950, 1970, 1990, 2020];
+    const stepCount = years.length - 1;
+
+    track.addEventListener("click", (e) => {
+      const rect = track.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const stepWidth = rect.width / stepCount;
+      const step = Math.round(x / stepWidth);
+      const clampedX = step * stepWidth;
+
+      thumb.style.left = `${clampedX}px`;
+      yearLabel.textContent = years[step];
+    });
+
+    // 初始位置
+    thumb.style.left = "0px";
+  </script>
+</body>
+</html>

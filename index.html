@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Francis Lee Interaction</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      background-image: linear-gradient(white 1px, transparent 1px),
+                        linear-gradient(90deg, white 1px, transparent 1px);
+      background-size: 40px 40px;
+      position: relative;
+      transition: background-color 0.1s linear;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 28px;
+      letter-spacing: 2px;
+    }
+
+    .follower {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+    }
+
+    .follower::before, .follower::after {
+      content: '';
+      position: absolute;
+      background-color: white;
+    }
+
+    .follower::before {
+      width: 2px;
+      height: 100%;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+    }
+
+    .follower::after {
+      height: 2px;
+      width: 100%;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+
+    .block {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: white;
+      opacity: 0.8;
+      pointer-events: none;
+      animation: fadeOut 1s ease-out forwards;
+    }
+
+    @keyframes fadeOut {
+      to {
+        opacity: 0;
+        transform: scale(1.2);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="center-text">Francis Lee_</div>
+  <div class="follower" id="follower"></div>
+
+  <script>
+    const follower = document.getElementById("follower");
+    const body = document.body;
+    let mouseX = 0, mouseY = 0;
+    let posX = window.innerWidth / 2, posY = window.innerHeight / 2;
+
+    function animateFollower() {
+      posX += (mouseX - posX) * 0.08;
+      posY += (mouseY - posY) * 0.08;
+      follower.style.left = posX + "px";
+      follower.style.top = posY + "px";
+      requestAnimationFrame(animateFollower);
+    }
+
+    function updateBackgroundFromEdge(x, y) {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      const maxDistance = Math.sqrt(centerX * centerX + centerY * centerY);
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const brightness = Math.pow(dist / maxDistance, 2);  // nonlinear
+      const value = Math.floor(brightness * 255);
+      body.style.backgroundColor = `rgb(${value}, ${value}, ${value})`;
+    }
+
+    function spawnGridBlock(x, y) {
+      const block = document.createElement("div");
+      block.className = "block";
+      const offsetX = (Math.random() - 0.5) * 200;
+      const offsetY = (Math.random() - 0.5) * 200;
+      block.style.left = `${x + offsetX}px`;
+      block.style.top = `${y + offsetY}px`;
+      document.body.appendChild(block);
+      setTimeout(() => block.remove(), 1000);
+    }
+
+    document.addEventListener("mousemove", (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      updateBackgroundFromEdge(mouseX, mouseY);
+
+      // Occasionally spawn a random white grid block
+      if (Math.random() < 0.3) {
+        spawnGridBlock(mouseX, mouseY);
+      }
+    });
+
+    animateFollower();
+  </script>
+</body>
+</html>
